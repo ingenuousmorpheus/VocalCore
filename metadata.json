@@ -1,0 +1,7 @@
+{
+  "name": "VocalCore AI - Professional Vocal Processor",
+  "description": "An intelligent vocal processing suite that uses AI to transform any recording into professional, mix-ready output.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
