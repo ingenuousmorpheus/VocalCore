@@ -218,13 +218,30 @@ export const ExpertView: React.FC<ExpertViewProps> = ({
               </div>
 
               <div className="flex flex-col items-center gap-4">
-                 <Knob 
-                    label="Humanize" 
-                    value={currentHumanize} 
-                    color="#f59e0b" 
+                 <Knob
+                    label="Humanize"
+                    value={currentHumanize}
+                    color="#f59e0b"
                     onChange={(v) => onControlChange('humanize', v)}
                  />
                  <span className="text-[10px] text-amber-400/50 font-mono">{currentHumanize}%</span>
+              </div>
+           </div>
+
+           {/* Tune Amount Control */}
+           <div className="lg:col-span-2 flex justify-center mt-2">
+              <div className="bg-black/40 rounded-2xl p-4 px-8 border border-white/5 flex items-center gap-6">
+                 <div className="flex flex-col">
+                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Pitch Correction</span>
+                    <span className="text-[8px] text-slate-500 font-mono">Wet/Dry Mix</span>
+                 </div>
+                 <Knob
+                    label="Tune Amount"
+                    value={params?.tuneAmount ?? 0}
+                    color="#10b981"
+                    onChange={(v) => onControlChange('tuneAmount', v)}
+                 />
+                 <span className="text-[10px] text-emerald-400/50 font-mono">{params?.tuneAmount ?? 0}%</span>
               </div>
            </div>
 

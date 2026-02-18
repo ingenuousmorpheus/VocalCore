@@ -165,11 +165,11 @@ export const AutoView: React.FC<AutoViewProps> = ({
           value={analysis?.suggestedParameters.intensity || 50} 
           onChange={(v) => onControlChange('intensity', v)} 
         />
-        <Knob 
-          label="Auto-Tune" 
-          value={analysis?.suggestedParameters.tuneAmount || 85} 
+        <Knob
+          label="Auto-Tune"
+          value={analysis?.suggestedParameters.tuneAmount || 0}
           color="#f59e0b"
-          onChange={(v) => onControlChange('tune', v)} 
+          onChange={(v) => onControlChange('tuneAmount', v)}
         />
         <Knob 
           label="Dynamics" 

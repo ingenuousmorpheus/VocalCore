@@ -6,6 +6,7 @@ import { AutoView } from './components/AutoView';
 import { ExpertView } from './components/ExpertView';
 import { CloneView } from './components/CloneView';
 import { analyzeAudioCharacteristics } from './services/geminiService';
+import { correctPitch, hardTune } from './services/pitchCorrection';
 
 const DEFAULT_ANALYSIS: AudioAnalysis = {
   genre: "Vocal",
@@ -329,25 +330,24 @@ const App: React.FC = () => {
       decodedBuffer.sampleRate
     );
 
-    const source = offlineCtx.createBufferSource();
-    source.buffer = decodedBuffer;
-
-    // Simulate robotic pitch quantizing if retuneSpeed is 0
-    if (params.retuneSpeed === 0) {
-      const data = decodedBuffer.getChannelData(0);
-      const windowSize = 512; // Robotic steps
-      for (let i = 0; i < data.length; i += windowSize) {
-        let sum = 0;
-        for (let j = 0; j < windowSize && i + j < data.length; j++) {
-          sum += data[i + j];
-        }
-        const avg = sum / windowSize;
-        for (let j = 0; j < windowSize && i + j < data.length; j++) {
-           // Slightly quantize the waveform for a 'bit-crushed' robotic feel
-           data[i+j] = avg * 0.7 + data[i+j] * 0.3;
-        }
+    // Apply real pitch correction to the decoded buffer before routing through effects
+    const tuneAmount = params.tuneAmount ?? 0;
+    if (tuneAmount > 0) {
+      for (let ch = 0; ch < decodedBuffer.numberOfChannels; ch++) {
+        const channelData = decodedBuffer.getChannelData(ch);
+        const corrected = params.retuneSpeed === 0
+          ? hardTune(channelData, decodedBuffer.sampleRate)
+          : correctPitch(channelData, decodedBuffer.sampleRate, {
+              retuneSpeed: params.retuneSpeed,
+              humanize: params.humanize,
+              tuneAmount,
+            });
+        channelData.set(corrected);
       }
     }
+
+    const source = offlineCtx.createBufferSource();
+    source.buffer = decodedBuffer;
 
     const eq = offlineCtx.createBiquadFilter();
     eq.type = 'highshelf';
